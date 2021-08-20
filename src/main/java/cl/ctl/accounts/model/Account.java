@@ -1,6 +1,6 @@
-package cl.ctl.password.model;
+package cl.ctl.accounts.model;
 
-import static cl.ctl.password.model.DAO.NON_PERSISTED_ID;
+import static cl.ctl.accounts.model.DAO.NON_PERSISTED_ID;
 
 /**
  * Created by root on 09-08-21.

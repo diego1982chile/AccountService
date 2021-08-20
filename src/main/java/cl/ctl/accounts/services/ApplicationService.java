@@ -1,4 +1,4 @@
-package cl.ctl.password.services;
+package cl.ctl.accounts.services;
 
 import javax.ws.rs.ApplicationPath;
 import javax.ws.rs.core.Application;

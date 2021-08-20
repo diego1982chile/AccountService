@@ -1,14 +1,10 @@
-package cl.ctl.password.managers;
+package cl.ctl.accounts.managers;
 
-import cl.ctl.password.daos.AccountDAO;
-import cl.ctl.password.model.Account;
+import cl.ctl.accounts.daos.AccountDAO;
+import cl.ctl.accounts.model.Account;
 
-import javax.ejb.Asynchronous;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
-import java.sql.Date;
-import java.sql.Timestamp;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -30,6 +26,14 @@ public class AccountManager {
 
     public Account updateAccount(Account account) throws Exception {
         return accountDAO.updateAccount(account);
+    }
+
+    public Account createAccount(Account account) throws Exception {
+        return accountDAO.createAccount(account);
+    }
+
+    public Account deleteAccount(long id) throws Exception {
+        return accountDAO.deleteAccount(account);
     }
 
 

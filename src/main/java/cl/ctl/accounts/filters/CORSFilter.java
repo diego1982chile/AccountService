@@ -1,4 +1,4 @@
-package cl.ctl.password.filters;
+package cl.ctl.accounts.filters;
 
 import javax.inject.Named;
 import javax.ws.rs.container.ContainerRequestContext;

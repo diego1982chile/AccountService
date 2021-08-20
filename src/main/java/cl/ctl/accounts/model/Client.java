@@ -1,21 +1,21 @@
-package cl.ctl.password.model;
+package cl.ctl.accounts.model;
 
-import static cl.ctl.password.model.DAO.NON_PERSISTED_ID;
+import static cl.ctl.accounts.model.DAO.NON_PERSISTED_ID;
 
 /**
  * Created by root on 09-08-21.
  */
-public class Holding {
+public class Client {
 
     /** El identificador único de la entidad, inicialmente fijado en <code>NON_PERSISTED_ID</code>. */
     private long id = NON_PERSISTED_ID;
 
     private String name;
 
-    public Holding() {
+    public Client() {
     }
 
-    public Holding(long id, String name) {
+    public Client(long id, String name) {
         this.id = id;
         this.name = name;
     }

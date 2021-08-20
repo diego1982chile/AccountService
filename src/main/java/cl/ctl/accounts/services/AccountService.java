@@ -1,7 +1,7 @@
-package cl.ctl.password.services;
+package cl.ctl.accounts.services;
 
-import cl.ctl.password.managers.AccountManager;
-import cl.ctl.password.model.Account;
+import cl.ctl.accounts.managers.AccountManager;
+import cl.ctl.accounts.model.Account;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
@@ -27,7 +27,7 @@ public class AccountService {
     static private final Logger logger = Logger.getLogger(AccountService.class.getName());
 
     @GET
-    public Response getAllAccounts(@QueryParam("periods") @DefaultValue("20") int periods) {
+    public Response getAllAccounts() {
         try {
             List<Account> accounts = accountManager.getAllAccounts();
             return Response.ok(accounts).build();
@@ -51,12 +51,38 @@ public class AccountService {
         return Response.serverError().build();
     }
 
-    @POST
+    @PUT
     @Path("update")
     public Response updateAccount(Account account) {
         try {
             Account modified = accountManager.updateAccount(account);
             return Response.ok(modified).build();
+        }
+        catch (Exception e) {
+            logger.log(Level.SEVERE, e.getMessage());
+        }
+        return Response.serverError().build();
+    }
+
+    @POST
+    @Path("new")
+    public Response createAccount(Account account) {
+        try {
+            Account newAccount = accountManager.createAccount(account);
+            return Response.ok(newAccount).build();
+        }
+        catch (Exception e) {
+            logger.log(Level.SEVERE, e.getMessage());
+        }
+        return Response.serverError().build();
+    }
+
+    @DELETE
+    @Path("delete/{id}")
+    public Response deleteAccount(@PathParam("id") long id) {
+        try {
+            Account newAccount = accountManager.createAccount(account);
+            return Response.ok(newAccount).build();
         }
         catch (Exception e) {
             logger.log(Level.SEVERE, e.getMessage());

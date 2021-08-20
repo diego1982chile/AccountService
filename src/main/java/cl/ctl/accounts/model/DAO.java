@@ -1,4 +1,4 @@
-package cl.ctl.password.model;
+package cl.ctl.accounts.model;
 
 import java.io.Serializable;
 
