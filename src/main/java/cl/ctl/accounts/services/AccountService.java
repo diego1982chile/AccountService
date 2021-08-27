@@ -81,8 +81,8 @@ public class AccountService {
     @Path("delete/{id}")
     public Response deleteAccount(@PathParam("id") long id) {
         try {
-            Account newAccount = accountManager.createAccount(account);
-            return Response.ok(newAccount).build();
+            long idDeleted = accountManager.deleteAccount(id);
+            return Response.ok(idDeleted).build();
         }
         catch (Exception e) {
             logger.log(Level.SEVERE, e.getMessage());

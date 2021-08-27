@@ -32,8 +32,8 @@ public class AccountManager {
         return accountDAO.createAccount(account);
     }
 
-    public Account deleteAccount(long id) throws Exception {
-        return accountDAO.deleteAccount(account);
+    public long deleteAccount(long id) throws Exception {
+        return accountDAO.deleteAccount(id);
     }
 
 

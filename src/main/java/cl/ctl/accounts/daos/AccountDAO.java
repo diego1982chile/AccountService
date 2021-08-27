@@ -182,9 +182,9 @@ public class AccountDAO {
 
     }
 
-    public Account deleteAccount(long id) throws Exception {
+    public long deleteAccount(long id) throws Exception {
 
-        String sql = "{call ctl.delete_account(?,?,?,?)}";
+        String sql = "{call ctl.delete_account(?)}";
 
         try (Connection connect = dataSource.getConnection();
              CallableStatement call = connect.prepareCall(sql);
@@ -197,13 +197,20 @@ public class AccountDAO {
             ResultSet rs = call.getResultSet();
 
             if (rs.next()) {
-                long id = rs.getLong(1);
+                long idDeleted = rs.getLong(1);
 
-                return getAccountById(account.getId());
+                if(idDeleted < 0) {
+                    connect.rollback();
+                    String errorMsg = "El registro no fue eliminado. Contacte a Desarrollo";
+                    logger.log(Level.SEVERE, errorMsg);
+                    throw new Exception(errorMsg);
+                }
+
+                return idDeleted;
 
             } else {
                 connect.rollback();
-                String errorMsg = "El registro no fue creado. Contacte a Desarrollo";
+                String errorMsg = "El registro no fue eliminado. Contacte a Desarrollo";
                 logger.log(Level.SEVERE, errorMsg);
                 throw new Exception(errorMsg);
             }
