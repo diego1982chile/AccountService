@@ -5,10 +5,7 @@ import cl.ctl.accounts.model.Client;
 import javax.annotation.Resource;
 import javax.enterprise.context.RequestScoped;
 import javax.sql.DataSource;
-import java.sql.CallableStatement;
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
@@ -29,16 +26,14 @@ public class ClientDAO {
 
         List<Client> clients = new ArrayList<>();
 
-        String sql = "{call ctl.get_all_clients()}";
+        String sql = "select * from client";
 
         try (Connection connect = dataSource.getConnection();
-             CallableStatement call = connect.prepareCall(sql)) {
+             PreparedStatement call = connect.prepareStatement(sql)) {
 
-            call.execute();
+            ResultSet rs = call.executeQuery();
 
             logger.log(Level.INFO, "Registros recuperadas:");
-
-            ResultSet rs = call.getResultSet();
 
             while (rs.next()) {
                 clients.add(createClientFromResultSet(rs));
@@ -57,18 +52,16 @@ public class ClientDAO {
 
         Client client = null;
 
-        String sql = "{call ctl.get_client_by_id(?)}";
+        String sql = "select * from client where id = ?";
 
         try (Connection connect = dataSource.getConnection();
-             CallableStatement call = connect.prepareCall(sql)) {
+             PreparedStatement call = connect.prepareStatement(sql)) {
 
             call.setLong(1, id);
 
-            call.execute();
+            ResultSet rs = call.executeQuery();
 
             logger.log(Level.INFO, "Registros recuperados:");
-
-            ResultSet rs = call.getResultSet();
 
             if (rs.next()) {
                 client = createClientFromResultSet(rs);

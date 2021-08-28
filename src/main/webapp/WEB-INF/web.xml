@@ -9,9 +9,8 @@
             30
         </session-timeout>
     </session-config>
-    <data-source>
+    <!--data-source>
         <name>java:global/accountsDS</name>
-        <!--class-name>org.postgresql.ds.PGSimpleDataSource</class-name-->
         <class-name>org.postgresql.xa.PGXADataSource</class-name>
         <server-name>dnssemantikos</server-name>
         <port-number>5432</port-number>
@@ -22,5 +21,11 @@
             <name>fish.payara.slow-query-threshold-in-seconds</name>
             <value>5</value>
         </property>
+    </data-source-->
+    <data-source>
+        <name>java:global/accountsDS</name>
+        <!--class-name>org.postgresql.ds.PGSimpleDataSource</class-name-->
+        <class-name>org.sqlite.SQLiteDataSource</class-name>
+        <url>jdbc:sqlite:accounts.db</url>
     </data-source>
 </web-app>

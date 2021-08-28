@@ -37,18 +37,16 @@ public class AccountDAO {
 
         Account account = null;
 
-        String sql = "{call ctl.get_account_by_id(?)}";
+        String sql = "select * from account where id = ?";
 
         try (Connection connect = dataSource.getConnection();
-             CallableStatement call = connect.prepareCall(sql)) {
+             PreparedStatement call = connect.prepareStatement(sql)) {
 
             call.setLong(1, id);
 
-            call.execute();
+            ResultSet rs = call.executeQuery();
 
             logger.log(Level.INFO, "Registros recuperados:");
-
-            ResultSet rs = call.getResultSet();
 
             if (rs.next()) {
                 account = createAccountFromResultSet(rs);
@@ -72,19 +70,17 @@ public class AccountDAO {
 
         Account account = null;
 
-        String sql = "{call ctl.get_account_by_client_and_holding(?,?)}";
+        String sql = "SELECT a.* FROM account a INNER JOIN client c ON a.id_client = c.id AND c.name = ? INNER JOIN holding h ON a.id_holding = h.id AND h.name = ?";
 
         try (Connection connect = dataSource.getConnection();
-             CallableStatement call = connect.prepareCall(sql)) {
+             PreparedStatement call = connect.prepareStatement(sql)) {
 
             call.setString(1, clientName);
             call.setString(2, holdingName);
 
-            call.execute();
+            ResultSet rs = call.executeQuery();
 
             logger.log(Level.INFO, "Registros recuperados:");
-
-            ResultSet rs = call.getResultSet();
 
             if (rs.next()) {
                 account = createAccountFromResultSet(rs);
@@ -106,10 +102,10 @@ public class AccountDAO {
 
     public Account createAccount(Account account) throws Exception {
 
-        String sql = "{call ctl.create_account(?,?,?,?,?)}";
+        String sql = "INSERT INTO account('id_client','id_holding','username','password','company') VALUES (?,?,?,?,?) RETURNING id";
 
         try (Connection connect = dataSource.getConnection();
-             CallableStatement call = connect.prepareCall(sql);
+             PreparedStatement call = connect.prepareStatement(sql);
         ) {
 
             call.setLong(1, account.getClient().getId());
@@ -147,16 +143,16 @@ public class AccountDAO {
 
     public Account updateAccount(Account account) throws Exception {
 
-        String sql = "{call ctl.update_account(?,?,?,?)}";
+        String sql = "UPDATE account SET username = ?, password = ?, company = ? WHERE id = ? RETURNING id";
 
         try (Connection connect = dataSource.getConnection();
-             CallableStatement call = connect.prepareCall(sql);
+             PreparedStatement call = connect.prepareStatement(sql);
         ) {
 
-            call.setLong(1, account.getId());
-            call.setString(2, account.getUser());
-            call.setString(3, account.getPassword());
-            call.setString(4, account.getCompany());
+            call.setString(1, account.getUser());
+            call.setString(2, account.getPassword());
+            call.setString(3, account.getCompany());
+            call.setLong(4, account.getId());
 
             call.execute();
 
@@ -184,10 +180,10 @@ public class AccountDAO {
 
     public long deleteAccount(long id) throws Exception {
 
-        String sql = "{call ctl.delete_account(?)}";
+        String sql = "DELETE FROM account WHERE id = ? RETURNING id";
 
         try (Connection connect = dataSource.getConnection();
-             CallableStatement call = connect.prepareCall(sql);
+             PreparedStatement call = connect.prepareStatement(sql);
         ) {
 
             call.setLong(1, id);
@@ -227,16 +223,14 @@ public class AccountDAO {
 
         List<Account> accounts = new ArrayList<>();
 
-        String sql = "{call ctl.get_all_accounts()}";
+        String sql = "SELECT a.* FROM account a INNER JOIN client c ON a.id_client = c.id INNER JOIN holding h ON a.id_holding = h.id ORDER BY c.name, h.name";
 
         try (Connection connect = dataSource.getConnection();
-             CallableStatement call = connect.prepareCall(sql)) {
+             PreparedStatement call = connect.prepareStatement(sql)) {
 
-            call.execute();
+            ResultSet rs = call.executeQuery();
 
             logger.log(Level.INFO, "Registros recuperadas:");
-
-            ResultSet rs = call.getResultSet();
 
             while (rs.next()) {
                 accounts.add(createAccountFromResultSet(rs));
@@ -257,7 +251,7 @@ public class AccountDAO {
 
         String company = resultSet.getString("company");
         String user = resultSet.getString("username");
-        String password = resultSet.getString("userpass");
+        String password = resultSet.getString("password");
 
         Client client = clientDAO.getClientById(resultSet.getLong("id_client"));
 

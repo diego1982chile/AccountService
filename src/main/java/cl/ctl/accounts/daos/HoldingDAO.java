@@ -6,10 +6,7 @@ import cl.ctl.accounts.model.Holding;
 import javax.annotation.Resource;
 import javax.enterprise.context.RequestScoped;
 import javax.sql.DataSource;
-import java.sql.CallableStatement;
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
@@ -30,18 +27,16 @@ public class HoldingDAO {
 
         Holding holding = null;
 
-        String sql = "{call ctl.get_holding_by_id(?)}";
+        String sql = "select * from holding where id = ?";
 
         try (Connection connect = dataSource.getConnection();
-             CallableStatement call = connect.prepareCall(sql)) {
+             PreparedStatement call = connect.prepareStatement(sql)) {
 
             call.setLong(1, id);
 
-            call.execute();
+            ResultSet rs = call.executeQuery();
 
             logger.log(Level.INFO, "Registros recuperados:");
-
-            ResultSet rs = call.getResultSet();
 
             if (rs.next()) {
                 holding = createHoldingFromResultSet(rs);
@@ -66,16 +61,14 @@ public class HoldingDAO {
 
         List<Holding> holdings = new ArrayList<>();
 
-        String sql = "{call ctl.get_all_holdings()}";
+        String sql = "select * from holding";
 
         try (Connection connect = dataSource.getConnection();
-             CallableStatement call = connect.prepareCall(sql)) {
+             PreparedStatement call = connect.prepareStatement(sql)) {
 
-            call.execute();
+            ResultSet rs = call.executeQuery();
 
             logger.log(Level.INFO, "Registros recuperadas:");
-
-            ResultSet rs = call.getResultSet();
 
             while (rs.next()) {
                 holdings.add(createHoldingFromResultSet(rs));

@@ -9,10 +9,7 @@ import javax.annotation.Resource;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.sql.DataSource;
-import java.sql.CallableStatement;
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
@@ -41,10 +38,10 @@ public class UserDAO {
 
         User user = null;
 
-        String sql = "{call ctl.get_user_by_username(?)}";
+        String sql = "SELECT * FROM user WHERE username = ?";
 
         try (Connection connect = dataSource.getConnection();
-             CallableStatement call = connect.prepareCall(sql)) {
+             PreparedStatement call = connect.prepareStatement(sql)) {
 
             call.setString(1, username);
 
@@ -75,10 +72,10 @@ public class UserDAO {
 
     public User createUser(User user) throws Exception {
 
-        String sql = "{call ctl.create_user(?,?,?)}";
+        String sql = "INSERT INTO user('username','password','salt') VALUES (?,?,?) RETURNING id";
 
         try (Connection connect = dataSource.getConnection();
-             CallableStatement call = connect.prepareCall(sql);
+             PreparedStatement call = connect.prepareStatement(sql);
         ) {
 
             call.setString(1, user.getUsername());
@@ -117,7 +114,7 @@ public class UserDAO {
         long id = resultSet.getLong("id");
 
         String username = resultSet.getString("username");
-        String password = resultSet.getString("passwrd");
+        String password = resultSet.getString("password");
         String salt = resultSet.getString("salt");
 
         return new User(id, username, password, salt);
