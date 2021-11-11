@@ -1,6 +1,7 @@
 package cl.ctl.accounts.managers;
 
 import cl.ctl.accounts.daos.ClientDAO;
+import cl.ctl.accounts.model.Account;
 import cl.ctl.accounts.model.Client;
 
 import javax.enterprise.context.RequestScoped;
@@ -21,5 +22,16 @@ public class ClientManager {
         return clientDAO.getAllClients();
     }
 
+    public Client createClient(Client client) throws Exception {
+        return clientDAO.createClient(client);
+    }
+
+    public Client updateClient(Client client) throws Exception {
+        return clientDAO.updateClient(client);
+    }
+
+    public long deleteClient(long id) throws Exception {
+        return clientDAO.deleteClient(id);
+    }
 
 }

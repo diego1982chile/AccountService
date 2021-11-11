@@ -8,6 +8,7 @@ import cl.ctl.accounts.model.Holding;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Response;
@@ -35,6 +36,19 @@ public class HoldingService {
         try {
             List<Holding> holdings = holdingManager.getAllHoldings();
             return Response.ok(holdings).build();
+        }
+        catch (Exception e) {
+            logger.log(Level.SEVERE, e.getMessage());
+        }
+        return Response.serverError().build();
+    }
+
+    @POST
+    @Path("new")
+    public Response createClient(Holding holding) {
+        try {
+            Holding newHolding = holdingManager.createHolding(holding);
+            return Response.ok(newHolding).build();
         }
         catch (Exception e) {
             logger.log(Level.SEVERE, e.getMessage());

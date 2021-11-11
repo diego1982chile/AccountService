@@ -26,7 +26,7 @@ public class ClientDAO {
 
         List<Client> clients = new ArrayList<>();
 
-        String sql = "select * from client";
+        String sql = "select * from client order by name";
 
         try (Connection connect = dataSource.getConnection();
              PreparedStatement call = connect.prepareStatement(sql)) {
@@ -80,6 +80,120 @@ public class ClientDAO {
 
         return client;
     }
+
+    public Client createClient(Client client) throws Exception {
+
+        String sql = "INSERT INTO client('name') VALUES (?) RETURNING id";
+
+        try (Connection connect = dataSource.getConnection();
+             PreparedStatement call = connect.prepareStatement(sql);
+        ) {
+
+            call.setString(1, client.getName());
+
+            call.execute();
+
+            ResultSet rs = call.getResultSet();
+
+            if (rs.next()) {
+                long id = rs.getLong(1);
+
+                client.setId(id);
+
+                return client;
+
+            } else {
+                connect.rollback();
+                String errorMsg = "El registro no fue creado. Contacte a Desarrollo";
+                logger.log(Level.SEVERE, errorMsg);
+                throw new Exception(errorMsg);
+            }
+            //rs.close();
+            //connect.commit();
+        } catch (SQLException e) {
+            logger.log(Level.SEVERE, e.getMessage());
+            throw new Exception(e);
+        }
+
+    }
+
+    public Client updateClient(Client client) throws Exception {
+
+        String sql = "UPDATE client SET name = ? WHERE id = ? RETURNING id";
+
+        try (Connection connect = dataSource.getConnection();
+             PreparedStatement call = connect.prepareStatement(sql);
+        ) {
+
+            call.setString(1, client.getName());
+            call.setLong(2, client.getId());
+
+            call.execute();
+
+            ResultSet rs = call.getResultSet();
+
+            if (rs.next()) {
+                long id = rs.getLong(1);
+
+                return getClientById(client.getId());
+
+            } else {
+                connect.rollback();
+                String errorMsg = "El registro no fue creado. Contacte a Desarrollo";
+                logger.log(Level.SEVERE, errorMsg);
+                throw new Exception(errorMsg);
+            }
+            //rs.close();
+            //connect.commit();
+        } catch (SQLException e) {
+            logger.log(Level.SEVERE, e.getMessage());
+            throw new Exception(e);
+        }
+
+    }
+
+    public long deleteClient(long id) throws Exception {
+
+        String sql = "DELETE FROM client WHERE id = ? RETURNING id";
+
+        try (Connection connect = dataSource.getConnection();
+             PreparedStatement call = connect.prepareStatement(sql);
+        ) {
+
+            call.setLong(1, id);
+
+            call.execute();
+
+            ResultSet rs = call.getResultSet();
+
+            if (rs.next()) {
+                long idDeleted = rs.getLong(1);
+
+                if(idDeleted < 0) {
+                    connect.rollback();
+                    String errorMsg = "El registro no fue eliminado. Contacte a Desarrollo";
+                    logger.log(Level.SEVERE, errorMsg);
+                    throw new Exception(errorMsg);
+                }
+
+                return idDeleted;
+
+            } else {
+                connect.rollback();
+                String errorMsg = "El registro no fue eliminado. Contacte a Desarrollo";
+                logger.log(Level.SEVERE, errorMsg);
+                throw new Exception(errorMsg);
+            }
+            //rs.close();
+            //connect.commit();
+        } catch (SQLException e) {
+            logger.log(Level.SEVERE, e.getMessage());
+            throw new Exception(e);
+        }
+
+    }
+
+
 
     private Client createClientFromResultSet(ResultSet resultSet) throws Exception {
 

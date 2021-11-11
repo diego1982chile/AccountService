@@ -23,5 +23,9 @@ public class HoldingManager {
         return holdingDAO.getAllHoldings();
     }
 
+    public Holding createHolding(Holding holding) throws Exception {
+        return holdingDAO.createHolding(holding);
+    }
+
 
 }

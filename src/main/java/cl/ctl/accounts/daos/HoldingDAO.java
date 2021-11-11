@@ -61,7 +61,7 @@ public class HoldingDAO {
 
         List<Holding> holdings = new ArrayList<>();
 
-        String sql = "select * from holding";
+        String sql = "select * from holding order by name";
 
         try (Connection connect = dataSource.getConnection();
              PreparedStatement call = connect.prepareStatement(sql)) {
@@ -81,6 +81,42 @@ public class HoldingDAO {
         }
 
         return holdings;
+    }
+
+    public Holding createHolding(Holding holding) throws Exception {
+
+        String sql = "INSERT INTO holding('name') VALUES (?) RETURNING id";
+
+        try (Connection connect = dataSource.getConnection();
+             PreparedStatement call = connect.prepareStatement(sql);
+        ) {
+
+            call.setString(1, holding.getName());
+
+            call.execute();
+
+            ResultSet rs = call.getResultSet();
+
+            if (rs.next()) {
+                long id = rs.getLong(1);
+
+                holding.setId(id);
+
+                return holding;
+
+            } else {
+                connect.rollback();
+                String errorMsg = "El registro no fue creado. Contacte a Desarrollo";
+                logger.log(Level.SEVERE, errorMsg);
+                throw new Exception(errorMsg);
+            }
+            //rs.close();
+            //connect.commit();
+        } catch (SQLException e) {
+            logger.log(Level.SEVERE, e.getMessage());
+            throw new Exception(e);
+        }
+
     }
 
 

@@ -40,5 +40,43 @@ public class ClientService {
         return Response.serverError().build();
     }
 
+    @POST
+    @Path("new")
+    public Response createClient(Client client) {
+        try {
+            Client newClient = clientManager.createClient(client);
+            return Response.ok(newClient).build();
+        }
+        catch (Exception e) {
+            logger.log(Level.SEVERE, e.getMessage());
+        }
+        return Response.serverError().build();
+    }
+
+    @PUT
+    @Path("update")
+    public Response updateAccount(Client client) {
+        try {
+            Client modified = clientManager.updateClient(client);
+            return Response.ok(modified).build();
+        }
+        catch (Exception e) {
+            logger.log(Level.SEVERE, e.getMessage());
+        }
+        return Response.serverError().build();
+    }
+
+    @DELETE
+    @Path("delete/{id}")
+    public Response deleteAccount(@PathParam("id") long id) {
+        try {
+            long idDeleted = clientManager.deleteClient(id);
+            return Response.ok(idDeleted).build();
+        }
+        catch (Exception e) {
+            logger.log(Level.SEVERE, e.getMessage());
+        }
+        return Response.serverError().build();
+    }
 
 }
